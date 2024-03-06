@@ -1,7 +1,12 @@
 COMP 440 - Course Project: Phase 1 | Spring 2024
 This repository hosts the development work for Phase 1 of our COMP 440 course project, due by midnight on Friday, 03/29/2024. Our team is tasked with creating a desktop or web-based application that facilitates user registration and login functionality, strictly adhering to the requirements set forth by our course.
 
-Project Highlights:
+
+
+
+
+
+#Project Highlights:
 
 Development Stack: Utilizes Java, C#, PHP, Python, or C++ combined with SQL for backend development.
 Core Features:
