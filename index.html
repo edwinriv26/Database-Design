@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Login Page</h1>
+    </header>
+    <form action="/your-login-handler" method="POST">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit" class="login-btn">Login</button>
+        <button type="button" class="signup-btn" onclick="document.getElementById('signupModal').style.display='block'">Sign Up</button>
+    </form>
+
+    <!-- The Modal -->
+    <div id="signupModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('signupModal').style.display='none'">&times;</span>
+            <form action="/your-signup-handler" method="POST">
+                <div>
+                    <label for="fname">First Name:</label>
+                    <input type="text" id="fname" name="fname" required>
+                </div>
+                <div>
+                    <label for="lname">Last Name:</label>
+                    <input type="text" id="lname" name="lname" required>
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <button type="submit" class="signup-btn">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
