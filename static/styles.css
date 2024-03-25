@@ -25,7 +25,7 @@ form {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-top: 20px; /* Add space between the header and the form */
 }
-input[type="text"], input[type="password"], input[type="email"] {
+input {
     width: calc(100% - 20px);
     padding: 10px;
     margin-bottom: 20px;
@@ -80,4 +80,12 @@ button {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+.flash-success {
+    color: green;
+}
+
+.flash-error {
+    color: red;
 }
