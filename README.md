@@ -29,6 +29,7 @@ Itzel: (COMPLETED)
 -Set DataBase to prevent SQL injection
 
 Zori: (COMPLETED)
+-Assisted in production of Database
 -Connected Front End to Back End Database
 -Added Additional Inputs to Sign up Page 
 
