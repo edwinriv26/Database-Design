@@ -10,7 +10,7 @@ app.secret_key = 'secret_key'
 # MySQL Configuration
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_PASSWORD'] = 'C@staneda2024!'
 app.config['MYSQL_DB'] = 'user'
 
 mysql = MySQL(app)
@@ -19,10 +19,16 @@ mysql = MySQL(app)
 def validate_email(email):
     return bool(re.match(r'^[\w\.-]+@[\w\.-]+$', email))
 
+# Function to validate name format (contains only letters)
+def validate_name(name):
+    return bool(re.match(r'^[a-zA-Z]+$', name))
+
 # Function to validate password format
 def validate_password(password):
-    return len(password) >= 6
-
+    # Password should contain at least six characters, at least one number,
+    # at least one uppercase letter, and at least one special character
+    # that does not include a single quote and double quote.
+    return bool(re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+{}|:<>?,./-])[A-Za-z\d~!@#$%^&*()_+{}|:<>?,./-]{6,}$', password))
 # Routes
 @app.route('/')
 def home():
@@ -43,9 +49,19 @@ def signup():
             flash('Invalid email format', 'error')
             return redirect(url_for('home'))
 
-        # Validate password length
+        # Validate password length and format
         if not validate_password(password):
-            flash('Password must be at least 6 characters long', 'error')
+            flash('Password must be at least 6 characters long and meet the requirements', 'error')
+            return redirect(url_for('home'))
+
+        # Validate first name format
+        if not validate_name(first_name):
+            flash('First name must contain only letters', 'error')
+            return redirect(url_for('home'))
+
+        # Validate last name format
+        if not validate_name(last_name):
+            flash('Last name must contain only letters', 'error')
             return redirect(url_for('home'))
 
         # Check if passwords match
@@ -55,7 +71,6 @@ def signup():
 
         # Check if username or email already exists
         cur = mysql.connection.cursor()
-        # cur.execute("SELECT * FROM login WHERE username = %s OR email = %s", (username, email))
         cur.execute("SELECT * FROM login WHERE username = %s OR email = %s", (username, email))
         existing_user = cur.fetchone()
         cur.close()
