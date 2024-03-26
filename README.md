@@ -13,3 +13,28 @@ Core Features:
 Database Schema Creation: Implements a user table schema (username, password, firstName, lastName, email) with username as the primary key and unique email, ensuring SQL injection prevention.
 User Registration and Login Interface: Enables new user sign-ups with fields for username, password (with confirmation), first name, last name, and email. Incorporates logic to handle duplicate usernames/emails and unmatching passwords.
 Security: Emphasis on safeguarding against SQL injection attacks, with additional resources and methodologies referenced for securing the database interactions.
+
+Group Tasks:
+Edwin: (COMPLETED)
+-Create Github REPO
+-Create Front end page with html/css
+-Create Login and Sign up Front End
+
+Itzel: (COMPLETED) 
+-Create DataBase
+-Created Schema for Database following this:
+  User(username, password, firstName, lastName, email)
+      •    set username as the primary key
+      •    set email to be unique
+-Set DataBase to prevent SQL injection
+
+Zori:
+-Connected Front End to Back End Database
+-Added Additional Inputs to Sign up Page 
+
+Videos
+Testcases: 
+https://drive.google.com/file/d/1r5DB1uUNyhNtK_cJBTWzhZ-K2CsrcQsV/view?usp=drive_link
+
+Testcases-password:
+https://drive.google.com/file/d/1o2-kb9yqxgs9MYheDi9Td2EL8ifVsJXf/view?usp=drive_link
