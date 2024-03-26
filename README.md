@@ -28,7 +28,7 @@ Itzel: (COMPLETED)
       •    set email to be unique
 -Set DataBase to prevent SQL injection
 
-Zori:
+Zori: (COMPLETED)
 -Connected Front End to Back End Database
 -Added Additional Inputs to Sign up Page 
 
