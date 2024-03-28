@@ -35,7 +35,7 @@ Zori: (COMPLETED)
 
 Videos
 Testcases: 
-https://drive.google.com/file/d/1r5DB1uUNyhNtK_cJBTWzhZ-K2CsrcQsV/view?usp=drive_link
+[https://drive.google.com/file/d/1r5DB1uUNyhNtK_cJBTWzhZ-K2CsrcQsV/view?usp=drive_link](https://youtu.be/w-LMKz2yhmQ)
 
 Testcases-password:
-https://drive.google.com/file/d/1o2-kb9yqxgs9MYheDi9Td2EL8ifVsJXf/view?usp=drive_link
+[https://drive.google.com/file/d/1o2-kb9yqxgs9MYheDi9Td2EL8ifVsJXf/view?usp=drive_link](https://youtu.be/PBa-y3510PM)
