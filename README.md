@@ -38,4 +38,5 @@ Testcases:
 [https://drive.google.com/file/d/1r5DB1uUNyhNtK_cJBTWzhZ-K2CsrcQsV/view?usp=drive_link](https://youtu.be/w-LMKz2yhmQ)
 
 Testcases-password:
+purpose: the first test case does't show a passing case of user input for password but it is shown in the second video.
 [https://drive.google.com/file/d/1o2-kb9yqxgs9MYheDi9Td2EL8ifVsJXf/view?usp=drive_link](https://youtu.be/PBa-y3510PM)
