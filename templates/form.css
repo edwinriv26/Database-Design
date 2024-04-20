@@ -2,11 +2,69 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
-    padding: 20px;
+    padding: 20px; /* Adjusted to apply padding to all sides */
+    box-sizing: border-box; /* Ensures padding does not add to width */
 }
 
-h1, h2 {
-    color: #333;
+header {
+    background-color: #3b5897;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+#logout {
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#logout:hover {
+    text-decoration: underline;
+}
+
+main {
+    padding: 20px;
+    margin-top: 100px; /* Adjusted based on the fixed header height */
+    margin-bottom: 60px; /* Additional space for the footer */
+}
+
+footer {
+    background-color: #f2f2f2;
+    color: #666;
+    text-align: center;
+    padding: 10px 20px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+section{
+    margin-top: 100px;
+}
+
+h1 {
+    color: #ffffff;
+    
+}
+
+h2 {
+    color: #3b5897;
+    cursor: pointer;
+}
+
+h2:hover {
+    text-decoration: underline;
 }
 
 form {
@@ -45,7 +103,7 @@ button {
 button:hover {
     background-color: #4a54e1;
 }
-/* Basic table styling */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -62,7 +120,6 @@ th {
     background-color: #f2f2f2;
 }
 
-/* Modal pop-up styles */
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -72,11 +129,9 @@ th {
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-/* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
@@ -86,7 +141,6 @@ th {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
 
-/* Close Button */
 .close {
     color: #aaa;
     float: right;
@@ -100,3 +154,8 @@ th {
     text-decoration: none;
     cursor: pointer;
 }
+
+div[id$="Section"] {
+    transition: all 0.3s ease-in-out;
+}
+

@@ -9,14 +9,14 @@ body {
 }
 header {
     width: 100%;
-    background-color: #add8e6; /* Light blue background */
+    background-color: #3b5897; /* Light blue background */
     padding: 20px 0;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 h1 {
     margin: 0; /* Reset default margin */
-    color: #333;
+    color: #ffffff;
 }
 form {
     background: #ffffff;

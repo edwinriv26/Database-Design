@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post an Item - Marketplace App</title>
+    <link rel="stylesheet" href="form.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Marketplace App</h1>
+        <button id="logout" onclick="logoutFunction()">Logout</button>
+    </header>
+    
+    <!-- Item Insertion Form -->
+    <section>
+        <h2>Post an Item</h2>
+        <form id="insertItemForm" onsubmit="event.preventDefault(); postItem();">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required><br>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea><br>
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" required><br>
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" required min="1"><br>
+            <button type="submit">Submit Item</button>
+        </form>
+    </section>
+
+    <!-- Success Modal with a unique name -->
+    <div id="successmodal" class="modal">
+        <div class="modal-content">
+            <h2>Success, item has been posted!</h2>
+            <button onclick="window.location.href='postitem.html';">Post Another Item</button>
+            <button onclick="window.location.href='form.html';">Main Menu</button>
+        </div>
+    </div>
+    
+
+    <footer>
+        <!-- Footer content here -->
+    </footer>
+
+    <script>
+        function postItem() {
+            console.log("Item posted");
+            document.getElementById('successmodal').style.display = 'block';  // Make sure the ID matches the one in HTML
+        }
+
+
+        function logoutFunction() {
+            // Redirect to the homepage or index page
+            window.location.href = 'index.html';
+        }
+
+    </script>
+</body>
+</html>
