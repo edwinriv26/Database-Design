@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask import session
+from datetime import datetime, timedelta, date
 
 import re
 
@@ -29,6 +30,16 @@ def validate_password(password):
     # at least one uppercase letter, and at least one special character
     # that does not include a single quote and double quote.
     return bool(re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+{}|:<>?,./-])[A-Za-z\d~!@#$%^&*()_+{}|:<>?,./-]{6,}$', password))
+
+# Function to check if user has posted maximum items for the day
+def check_item_post_limit(user_id):
+    today = datetime.now().date()
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT COUNT(*) FROM items WHERE user_id = %s AND DATE(date_created) = %s", (user_id, today))
+    count = cur.fetchone()[0]
+    cur.close()
+    return count >= 2
+
 # Routes
 @app.route('/')
 def home():
@@ -107,6 +118,7 @@ def login():
 
         # If a user with matching username and password is found, redirect to home page
         if user:
+            session['user_id'] = user['id']
             flash(f'Login successful. Welcome {username}!', 'success')
             return redirect(url_for('home'))
         else:
@@ -114,6 +126,107 @@ def login():
 
     # Render the login page
     return render_template('index.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('Logged out successfully', 'success')
+    return redirect(url_for('home'))
+
+@app.route('/add_item', methods=['POST'])
+def add_item():
+    if 'user_id' not in session:
+        flash('You must be logged in to add an item', 'error')
+        return redirect(url_for('home'))
+
+    user_id = session['user_id']
+    if check_item_post_limit(user_id):
+        flash('You have already posted the maximum number of items for today', 'error')
+        return redirect(url_for('home'))
+
+    title = request.form['title']
+    description = request.form['description']
+    category = request.form['category']
+    price = request.form['price']
+
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO items (user_id, title, description, category, price) VALUES (%s, %s, %s, %s, %s)", (user_id, title, description, category, price))
+    mysql.connection.commit()
+    cur.close()
+
+    flash('Item added successfully', 'success')
+    return redirect(url_for('home'))
+
+@app.route('/search', methods=['POST'])
+def search():
+    category = request.form['category']
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM items WHERE category = %s", (category,))
+    items = cur.fetchall()
+    cur.close()
+
+    return render_template('search_results.html', items=items)
+
+
+@app.route('/add_review', methods=['POST'])
+def add_review():
+    if 'user_id' not in session:
+        flash('You must be logged in to add a review', 'error')
+        return redirect(url_for('home'))
+
+    user_id = session['user_id']
+
+    # Check if the user has already given 3 reviews today
+    if count_user_reviews_today(user_id) >= 3:
+        flash('You have already given the maximum number of reviews for today', 'error')
+        return redirect(url_for('home'))
+
+    # Parse request data
+    item_id = request.form['item_id']
+    rating = request.form['rating']
+    description = request.form['description']
+
+    # Check if the user is trying to review their own item
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT user_id FROM items WHERE id = %s", (item_id,))
+    item_user_id = cur.fetchone()[0]
+    cur.close()
+
+    if item_user_id == user_id:
+        flash('You cannot review your own item', 'error')
+        return redirect(url_for('home'))
+
+    # Check if the user has already reviewed this item
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM reviews WHERE user_id = %s AND item_id = %s", (user_id, item_id))
+    existing_review = cur.fetchone()
+    cur.close()
+
+    if existing_review:
+        flash('You have already reviewed this item', 'error')
+        return redirect(url_for('home'))
+
+    # Insert the review into the database
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO reviews (user_id, item_id, rating, description) VALUES (%s, %s, %s, %s)", (user_id, item_id, rating, description))
+    mysql.connection.commit()
+    cur.close()
+
+    flash('Review added successfully', 'success')
+    return redirect(url_for('home'))
+
+# Helper function to count user's reviews for today
+def count_user_reviews_today(user_id):
+    today = date.today()
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT COUNT(*) FROM reviews WHERE user_id = %s AND DATE(created_at) = %s", (user_id, today))
+    count = cur.fetchone()[0]
+    cur.close()
+    return count
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
