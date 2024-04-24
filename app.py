@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask import session
-
 import re
 
 app = Flask(__name__, template_folder='templates')
@@ -29,11 +28,9 @@ def validate_password(password):
     # at least one uppercase letter, and at least one special character
     # that does not include a single quote and double quote.
     return bool(re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+{}|:<>?,./-])[A-Za-z\d~!@#$%^&*()_+{}|:<>?,./-]{6,}$', password))
-# Routes
-@app.route('/')
-def home():
-    return render_template('index.html')
 
+
+# Routes
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -108,12 +105,67 @@ def login():
         # If a user with matching username and password is found, redirect to home page
         if user:
             flash(f'Login successful. Welcome {username}!', 'success')
-            return redirect(url_for('home'))
+            session['username'] = username  # Store the username in session
+            session.pop('_flashes', [])  # Clear existing flash messages
+            return redirect(url_for('postitem'))  # Redirect to the postitem route
         else:
             flash('Invalid username or password', 'error')
+            return render_template('index.html', flash_messages=session['_flashes'])
+            
+    # Clear existing flash messages before rendering the login page
+    flash_messages = session.pop('_flashes', [])
+    return render_template('postitem.html', flash_messages=flash_messages)
 
+#@app.route('/postitem')   
+#def render_login_page():     
     # Render the login page
+#    return render_template('index.html')
+    
+@app.route('/postitem', methods=['GET', 'POST'])
+def postitem():
+    if 'username' not in session:
+        flash('You need to log in first', 'error')
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        title = request.form['title']  # Add this line to retrieve the title from the form
+        description = request.form['description']
+        category = request.form['category']
+        price = request.form['price']
+        username = session.get('username')  # Assuming you have stored the username in the session after login
+
+         # Get the current timestamp for itemcreated_at
+        from datetime import datetime
+        itemcreated_at = datetime.now()
+
+        # Connect to the database
+        cur = mysql.connection.cursor()
+
+        # Insert data into the 'item' table
+        cur.execute("""
+            INSERT INTO item (title, description, category, price, username, itemcreated_at) 
+            VALUES (%s, %s, %s, %s, %s, %s)""", 
+            (title, description, category, price, username, itemcreated_at))
+            
+        # Commit the transaction and close the cursor
+        mysql.connection.commit()
+        cur.close()
+        # Handle the form submission and item posting process
+        # After successfully posting the item, redirect to the post item page
+        flash('Item posted successfully', 'success')
+        return redirect(url_for('postitem'))
+
+    # Render the postitem page
+    return render_template('postitem.html')
+
+    
+@app.route('/')
+def home():
+   # if 'username' in session:  # Check if the user is logged in
+   # return redirect(url_for('postitem'))  # Redirect to the postitem route
+   # else:
     return render_template('index.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
