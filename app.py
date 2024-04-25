@@ -35,7 +35,7 @@ def validate_password(password):
 def check_item_post_limit(username):
     today = datetime.now().date()
     cur = mysql.connection.cursor()
-    cur.execute("SELECT COUNT(*) FROM item WHERE username = %s AND DATE(date_created) = %s", (username, today))
+    cur.execute("SELECT COUNT(*) FROM item WHERE username = %s AND DATE(itemcreated_at) = %s", (username, today))
     count = cur.fetchone()[0]
     cur.close()
     return count >= 2
@@ -139,39 +139,48 @@ def logout():
     flash('Logged out successfully', 'success')
     return redirect(url_for('home'))
     
+
 @app.route('/postitem', methods=['GET', 'POST'])
 def postitem():
     if 'username' not in session:
         flash('You need to log in first', 'error')
         return redirect(url_for('login'))
 
-    if request.method == 'POST':
-        title = request.form['title']  # Add this line to retrieve the title from the form
-        description = request.form['description']
-        category = request.form['category']
-        price = request.form['price']
-        username = session.get('username')  # Assuming you have stored the username in the session after login
 
-         # Get the current timestamp for itemcreated_at
-        from datetime import datetime
-        itemcreated_at = datetime.now()
-
-        # Connect to the database
-        cur = mysql.connection.cursor()
-
-        # Insert data into the 'item' table
-        cur.execute("""
-            INSERT INTO item (title, description, category, price, username, itemcreated_at) 
-            VALUES (%s, %s, %s, %s, %s, %s)""", 
-            (title, description, category, price, username, itemcreated_at))
-            
-        # Commit the transaction and close the cursor
-        mysql.connection.commit()
-        cur.close()
-        # Handle the form submission and item posting process
-        # After successfully posting the item, redirect to the post item page
-        flash('Item posted successfully', 'success')
+    
+    username = session['username']
+    if check_item_post_limit(username):
+        flash('You have already posted the maximum number of item for today', 'error')
         return redirect(url_for('postitem'))
+
+    
+    title = request.form['title']
+    description = request.form['description']
+    category = request.form['category']
+    price = request.form['price']
+
+         
+         
+    # Get the current timestamp for itemcreated_at
+    #from datetime import datetime
+    itemcreated_at = datetime.now()
+
+    # Connect to the database
+    cur = mysql.connection.cursor()
+
+    # Insert data into the 'item' table
+    cur.execute("""
+        INSERT INTO item (title, description, category, price, username, itemcreated_at) 
+        VALUES (%s, %s, %s, %s, %s, %s)""", 
+        (title, description, category, price, username, itemcreated_at))
+        
+    # Commit the transaction and close the cursor
+    mysql.connection.commit()
+    cur.close()
+    # Handle the form submission and item posting process
+    # After successfully posting the item, redirect to the post item page
+    flash('Item posted successfully', 'success')
+    return redirect(url_for('postitem'))
 
     # Render the postitem page
     return render_template('postitem.html')
@@ -189,10 +198,10 @@ def add_item():
         return redirect(url_for('home'))
 
     
-        title = request.form['title']
-        description = request.form['description']
-        category = request.form['category']
-        price = request.form['price']
+    title = request.form['title']
+    description = request.form['description']
+    category = request.form['category']
+    price = request.form['price']
 
     cur = mysql.connection.cursor()
     cur.execute("INSERT INTO item (username, title, description, category, price) VALUES (%s, %s, %s, %s, %s)", (username, title, description, category, price))
@@ -276,6 +285,7 @@ def home():
    # return redirect(url_for('postitem'))  # Redirect to the postitem route
    # else:
     return render_template('index.html')
+    
 
 
 if __name__ == '__main__':
