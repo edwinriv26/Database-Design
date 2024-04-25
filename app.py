@@ -119,7 +119,7 @@ def login():
             flash(f'Login successful. Welcome {username}!', 'success')
             session['username'] = username  # Store the username in session
             session.pop('_flashes', [])  # Clear existing flash messages
-            return redirect(url_for('postitem'))  # Redirect to the postitem route
+            return redirect(url_for('form'))  # Redirect to the postitem route
         else:
             flash('Invalid username or password', 'error')
             return render_template('index.html', flash_messages=session['_flashes'])
@@ -128,10 +128,7 @@ def login():
     flash_messages = session.pop('_flashes', [])
     return render_template('postitem.html', flash_messages=flash_messages)
 
-#@app.route('/postitem')   
-#def render_login_page():     
-    # Render the login page
-#    return render_template('index.html')
+
 
 @app.route('/logout')
 def logout():
@@ -142,16 +139,24 @@ def logout():
 
 @app.route('/postitem', methods=['GET', 'POST'])
 def postitem():
+
+    if request.method == 'GET':
+        if 'username' not in session:
+            flash('You need to log in first', 'error')
+            return redirect(url_for('login'))
+        else:
+            return render_template('postitem.html')
+
+
     if 'username' not in session:
         flash('You need to log in first', 'error')
         return redirect(url_for('login'))
-
-
     
     username = session['username']
     if check_item_post_limit(username):
         flash('You have already posted the maximum number of item for today', 'error')
-        return redirect(url_for('postitem'))
+        session.pop('_flashes', [])  # Clear existing flash messages
+        return redirect(url_for('form'))
 
     
     title = request.form['title']
@@ -180,47 +185,26 @@ def postitem():
     # Handle the form submission and item posting process
     # After successfully posting the item, redirect to the post item page
     flash('Item posted successfully', 'success')
-    return redirect(url_for('postitem'))
+    return redirect(url_for('form'))
 
     # Render the postitem page
     return render_template('postitem.html')
 
 
-@app.route('/add_item', methods=['POST'])
-def add_item():
-    if 'username' not in session:
-        flash('You must be logged in to add an item', 'error')
-        return redirect(url_for('home'))
-
-    username = session['username']
-    if check_item_post_limit(username):
-        flash('You have already posted the maximum number of item for today', 'error')
-        return redirect(url_for('home'))
-
-    
-    title = request.form['title']
-    description = request.form['description']
-    category = request.form['category']
-    price = request.form['price']
-
-    cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO item (username, title, description, category, price) VALUES (%s, %s, %s, %s, %s)", (username, title, description, category, price))
-    mysql.connection.commit()
-    cur.close()
-
-    flash('Item added successfully', 'success')
-    return redirect(url_for('home'))
-
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET', 'POST'])
 def search():
-    category = request.form['category']
 
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM item WHERE category = %s", (category,))
-    item = cur.fetchall()
-    cur.close()
+    if request.method == 'GET':
+        # Handle GET request for rendering the search page
+        return render_template('search.html')
+    elif request.method == 'POST':
+        category = request.form['category']
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM item WHERE category = %s", (category,))
+        items = cur.fetchall()
+        cur.close()
 
-    return render_template('search_results.html', item=item)
+        return render_template('search.html', items=items)
 
 
 @app.route('/add_review', methods=['POST'])
@@ -281,10 +265,17 @@ def count_user_reviews_today(username):
 
 @app.route('/')
 def home():
-   # if 'username' in session:  # Check if the user is logged in
-   # return redirect(url_for('postitem'))  # Redirect to the postitem route
-   # else:
-    return render_template('index.html')
+    #if 'username' in session:  # Check if the user is logged in
+    #    return redirect(url_for('postitem'))  # Redirect to the postitem route
+    #else:
+        return render_template('index.html')
+        
+@app.route('/form')
+def form():
+    #if 'username' in session:  # Check if the user is logged in
+    #    return redirect(url_for('postitem'))  # Redirect to the postitem route
+    #else:
+        return render_template('form.html')        
     
 
 
