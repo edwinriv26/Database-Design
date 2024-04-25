@@ -22,18 +22,25 @@
             <button type="button" onclick="clearSearch()">Clear Search</button>
         </form>
         <table id="searchResults" style="display: none;">
-            <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Action</th>
-            </tr>
-            <tr>
-                <td>iPhone X</td>
-                <td>Electronic, Cellphone, Apple</td>
-                <td>$1000</td>
-                <td><button onclick="openReviewModal()">Leave a Review</button></td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="searchResultsBody">
+                <!-- Search results will be dynamically added here -->
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.price }}</td>
+                    <td><a href="{{ url_for('add_review', item_id=item.id) }}">Add Review</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </section>
 
