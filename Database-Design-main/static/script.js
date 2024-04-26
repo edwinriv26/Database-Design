@@ -36,72 +36,50 @@ function closeSignupModal() {
     signupModal.style.display = 'none';
 }
 
-function openReviewModal() {
-    var reviewModal = document.getElementById('reviewModal');
-    reviewModal.style.display = 'block';
-}
-
-function closeReviewModal() {
-    var reviewModal = document.getElementById('reviewModal');
-    reviewModal.style.display = 'none';
-}
-
-function openReviewSuccessModal() {
-    var reviewSuccessModal = document.getElementById('reviewSuccessModal');
-    reviewSuccessModal.style.display = 'block';
-}
-
-function closeReviewSuccessModal() {
-    var reviewSuccessModal = document.getElementById('reviewSuccessModal');
-    reviewSuccessModal.style.display = 'none';
-}
-
 
 //-----------------------------------------search.html functions------------------------------------------
-        function openReviewModal() {
-            document.getElementById('reviewModal').style.display = 'block';
-        }
-
-        function closeReviewModal() {
-            document.getElementById('reviewModal').style.display = 'none';
-        }
-
-        function submitReview() {
-            console.log("Review submitted");
-            closeReviewModal();
-            document.getElementById('reviewSuccessModal').style.display = 'block';
-        }
-
-        function closeReviewSuccessModal() {
-            document.getElementById('reviewSuccessModal').style.display = 'none';
-        }
-
-        function performSearch() {
-            document.getElementById('searchResults').style.display = 'table';
-        }
-
-        function clearSearch() {
-            document.getElementById('searchCategory').value = '';
-            document.getElementById('searchResults').style.display = 'none';
-        }
-        
-        function performSearch() {
-            // Get the value of the search category input
-            var searchCategory = document.getElementById('searchCategory').value;
     
-            // You can perform further actions here, such as sending the search query to the server
-            // and retrieving search results dynamically. For now, let's just log the search query.
-            console.log("Search query:" +  searchQuery);
+       
 
-            // Show the search results table
-            document.getElementById('searchResults').style.display = 'table';
+function performSearch() {
+    const category = document.getElementById('searchCategory').value;
+    fetch('/search', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ category: category })
+    })
+    .then(response => response.json())
+    .then(items => {
+        const resultsBody = document.getElementById('searchResultsBody');
+        resultsBody.innerHTML = ''; // Clear previous results
+        items.forEach(item => {
+            const row = `
+                <tr>
+                    <td>${item.title}</td>
+                    <td>${item.category}</td>
+                    <td>${item.price}</td>
+                </tr>
+            `;
+            resultsBody.innerHTML += row;
+        });
+        document.getElementById('searchResults').style.display = 'block'; // Show results
+    })
+    .catch(error => {
+        console.error('Error fetching search results:', error);
+        alert('Failed to fetch search results.');
+    });
+}
 
-            // Prevent the default form submission behavior
-            return false;
-        }
+function clearSearch() {
+    document.getElementById('searchCategory').value = ''; // Clear input field
+    document.getElementById('searchResultsBody').innerHTML = ''; // Clear results
+    document.getElementById('searchResults').style.display = 'none'; // Hide results section
+}
 
-//------------------------------------------for all html files-----------------------------------------------
-        function logoutFunction() {
-            // Redirect to the homepage or index page
-            window.location.href = '/logout';
-        }
+function logoutFunction() {
+    // Implementation depends on how you handle logout, possibly redirecting to a logout route
+    window.location.href = '/logout';
+}
+

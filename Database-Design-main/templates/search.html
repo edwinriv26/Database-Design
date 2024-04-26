@@ -21,72 +21,26 @@
             <button type="submit">Search</button>
             <button type="button" onclick="clearSearch()">Clear Search</button>
         </form>
-        <table id="searchResults" style="display: none;">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="searchResultsBody">
-                <!-- Search results will be dynamically added here -->
-                {% for item in items %}
-                <tr>
-                    <td>{{ item.title }}</td>
-                    <td>{{ item.category }}</td>
-                    <td>{{ item.price }}</td>
-                    <td><a href="{{ url_for('add_review', item_id=item.id) }}">Add Review</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div id="searchResults" style="display: none;">
+            <h3>Search Results:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody id="searchResultsBody">
+                    <!-- Search results will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
     </section>
-
-    <!-- Modal for Review Submission -->
-    <div id="reviewModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeReviewModal()">&times;</span>
-            <h2>Submit a Review</h2>
-            <form id="reviewForm" onsubmit="event.preventDefault(); submitReview();">
-                <label for="itemSelect">Select Item:</label>
-                <select id="itemSelect" name="itemSelect" required>
-                    <option value="1">iPhone X</option>
-                </select><br>
-                <label for="rating">Rating:</label>
-                <select id="rating" name="rating" required>
-                    <option value="excellent">Excellent</option>
-                    <option value="good">Good</option>
-                    <option value="fair">Fair</option>
-                    <option value="poor">Poor</option>
-                </select><br>
-                <label for="reviewDescription">Description:</label>
-                <textarea id="reviewDescription" name="reviewDescription" required></textarea><br>
-                <button type="submit">Submit Review</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Success Modal for Review -->
-    <div id="reviewSuccessModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeReviewSuccessModal()">&times;</span>
-            <h2>Success, review has been posted!</h2>
-            <button onclick="openReviewModal(); closeReviewSuccessModal();">Leave Another Review</button>
-            <button onclick="window.location.href='form.html';">Main Menu</button>
-        </div>
-    </div>
 
     <footer>
         <!-- Include any common footer content here -->
     </footer>
-
-    <script>
-     
-}
-
-    </script>
     
     <!-- Link to script.js -->
     <script src="static/script.js"></script>
