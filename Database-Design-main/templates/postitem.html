@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post an Item - Marketplace App</title>
+    <link rel="stylesheet" href="../static/form.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Marketplace App</h1>
+        <button id="logout" onclick="logoutFunction()">Logout</button>
+    </header>
+    
+    <!-- Item Insertion Form -->
+    <section>
+        <h2>Post an Item</h2>
+        <form id="insertItemForm" action="/postitem" method="POST" postitem();">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required><br>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea><br>
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" required><br>
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" required min="1"><br>
+            <button type="submit">Submit Item</button>
+        </form>
+
+    </section>
+
+    <!-- Success Modal with a unique name -->
+    <div id="successmodal" class="modal">
+        <div class="modal-content">
+            <h2>Success, item has been posted!</h2>
+            <button onclick="window.location.href='postitem';">Post Another Item</button>
+            <button onclick="window.location.href='/postitem';">Main Menu</button>
+        </div>
+    </div>
+    
+
+    <footer>
+        <!-- Footer content here -->
+    </footer>
+
+      <script>
+        // Function to disable form submission and show message
+        function disableFormSubmission() {
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('maxItemsMessage').style.display = 'block';
+        }
+
+       
+
+        function postItem() {
+            console.log("Item posted");
+            document.getElementById('successmodal').style.display = 'block';  // Make sure the ID matches the one in HTML
+        }
+
+
+
+
+      
+
+    </script>
+     <!-- Link to script.js -->
+    <script src="static/script.js"></script>
+</body>
+</html>
