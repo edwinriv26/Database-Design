@@ -98,7 +98,43 @@ def signup():
 
     return render_template('index.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
 
+        # Connect to the database
+        cur = mysql.connection.cursor()
+
+        # Execute the SQL query to check if the username and password match
+        cur.execute("SELECT * FROM login WHERE username = %s AND password = %s", (username, password))
+        user = cur.fetchone()
+
+        # Close the database cursor
+        cur.close()
+
+        # If a user with matching username and password is found, redirect to home page
+        if user:
+            flash(f'Login successful. Welcome {username}!', 'success')
+            session['username'] = username  # Store the username in session
+            session.pop('_flashes', [])  # Clear existing flash messages
+            return redirect(url_for('form'))  # Redirect to the postitem route
+        else:
+            flash('Invalid username or password', 'error')
+            return render_template('index.html', flash_messages=session['_flashes'])
+            
+    # Clear existing flash messages before rendering the login page
+    flash_messages = session.pop('_flashes', [])
+    return render_template('postitem.html', flash_messages=flash_messages)
+
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    flash('Logged out successfully', 'success')
+    return redirect(url_for('home'))
     
 
 @app.route('/postitem', methods=['GET', 'POST'])
