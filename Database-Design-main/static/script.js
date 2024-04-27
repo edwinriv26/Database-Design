@@ -8,7 +8,7 @@ window.onclick = function(event) {
  */
  
  // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
+ window.onclick = function(event) {
     var signupModal = document.getElementById('signupModal');
     var reviewModal = document.getElementById('reviewModal');
     var reviewSuccessModal = document.getElementById('reviewSuccessModal');
@@ -36,14 +36,7 @@ function closeSignupModal() {
     signupModal.style.display = 'none';
 }
 
-function openReviewModal(itemId) {
-    document.getElementById('reviewItemId').value = itemId; // Set the item ID in a hidden input
-    document.getElementById('reviewModal').style.display = 'block';
-}
 
-function closeReviewModal() {
-    document.getElementById('reviewModal').style.display = 'none';
-}
 //-----------------------------------------search.html functions------------------------------------------
     
        
@@ -67,23 +60,13 @@ function performSearch() {
                     <td>${item.title}</td>
                     <td>${item.category}</td>
                     <td>$${item.price.toFixed(2)}</td>
-                    <td>
-                        <form onsubmit="submitReview(event, ${item.id});">
-                            <select name="rating" required>
-                                <option value="excellent">Excellent</option>
-                                <option value="good">Good</option>
-                                <option value="fair">Fair</option>
-                                <option value="poor">Poor</option>
-                            </select>
-                            <input type="text" name="description" placeholder="Enter your review" required>
-                            <button type="submit">Submit</button>
-                        </form>
-                    </td>
+                    <td><button onclick="openReviewSection(${item.id});">Review</button></td>
                 </tr>
             `;
             resultsBody.innerHTML += row;
         });
         document.getElementById('searchResults').style.display = 'block'; // Show results
+        document.getElementById('reviewSection').style.display = 'none'; // Hide the review section initially
     })
     .catch(error => {
         console.error('Error fetching search results:', error);
@@ -91,29 +74,28 @@ function performSearch() {
     });
 }
 
-function submitReview(event, itemId) {
-    event.preventDefault(); // Prevent the form from submitting normally
-    const form = event.target;
-    const rating = form.rating.value;
-    const description = form.description.value;
+function openReviewSection(itemId) {
+    document.getElementById('reviewItemId').value = itemId;
+    document.getElementById('reviewSection').style.display = 'block'; // Show the review section
+}
 
-    // AJAX call to submit the review
+function submitReview(event) {
+    event.preventDefault(); // Prevent form from submitting normally
+    const itemId = document.getElementById('reviewItemId').value;
+    const reviewText = document.getElementById('reviewText').value;
+
     fetch('/add_review', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ item_id: itemId, rating: rating, description: description })
+        body: JSON.stringify({ item_id: itemId, description: reviewText })
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok.');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(result => {
         alert('Review submitted successfully!');
-        form.reset(); // Optionally reset the form after submission
+        document.getElementById('reviewSection').style.display = 'none'; // Optionally hide the review section
+        document.getElementById('reviewForm').reset(); // Reset the form
     })
     .catch(error => {
         console.error('Error submitting review:', error);
@@ -125,9 +107,9 @@ function clearSearch() {
     document.getElementById('searchCategory').value = ''; // Clear input field
     document.getElementById('searchResultsBody').innerHTML = ''; // Clear results
     document.getElementById('searchResults').style.display = 'none'; // Hide results section
+    document.getElementById('reviewSection').style.display = 'none'; // Hide the review section
 }
 
 function logoutFunction() {
     window.location.href = '/logout';
 }
-

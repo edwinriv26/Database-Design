@@ -11,7 +11,7 @@
         <h1>Welcome to the Marketplace App</h1>
         <button id="logout" onclick="logoutFunction()">Logout</button>
     </header>
-
+    
     <!-- Search Form and Results -->
     <section id="searchSection">
         <h2>Search Items by Category</h2>
@@ -37,14 +37,23 @@
                 </tbody>
             </table>
         </div>
+        <div id="reviewSection" style="display: none;">
+            <h3>Write a Review:</h3>
+            <form id="reviewForm" onsubmit="submitReview(event);">
+                <input type="hidden" id="reviewItemId" name="item_id">
+                <label for="reviewText">Your Review:</label>
+                <input type="text" id="reviewText" name="reviewText" required>
+                <button type="submit">Submit Review</button>
+            </form>
+        </div>
     </section>
 
     <footer>
         <!-- Include any common footer content here -->
     </footer>
-
+    
     <!-- Link to script.js -->
     <script src="static/script.js"></script>
-
+    
 </body>
 </html>
