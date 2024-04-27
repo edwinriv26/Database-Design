@@ -57,12 +57,7 @@ function performSearch() {
         },
         body: JSON.stringify({ category: category })
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(items => {
         const resultsBody = document.getElementById('searchResultsBody');
         resultsBody.innerHTML = ''; // Clear previous results
@@ -72,7 +67,18 @@ function performSearch() {
                     <td>${item.title}</td>
                     <td>${item.category}</td>
                     <td>$${item.price.toFixed(2)}</td>
-                    <td><a href="#" onclick="openReviewModal(${item.id});">Review</a></td>
+                    <td>
+                        <form onsubmit="submitReview(event, ${item.id});">
+                            <select name="rating" required>
+                                <option value="excellent">Excellent</option>
+                                <option value="good">Good</option>
+                                <option value="fair">Fair</option>
+                                <option value="poor">Poor</option>
+                            </select>
+                            <input type="text" name="description" placeholder="Enter your review" required>
+                            <button type="submit">Submit</button>
+                        </form>
+                    </td>
                 </tr>
             `;
             resultsBody.innerHTML += row;
@@ -84,11 +90,12 @@ function performSearch() {
         alert('Failed to fetch search results.');
     });
 }
-function submitReview(event) {
+
+function submitReview(event, itemId) {
     event.preventDefault(); // Prevent the form from submitting normally
-    const itemId = document.getElementById('reviewItemId').value;
-    const rating = document.getElementById('rating').value; // Getting the rating from a select input
-    const reviewText = document.getElementById('reviewDescription').value;
+    const form = event.target;
+    const rating = form.rating.value;
+    const description = form.description.value;
 
     // AJAX call to submit the review
     fetch('/add_review', {
@@ -96,7 +103,7 @@ function submitReview(event) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ item_id: itemId, rating: rating, description: reviewText })
+        body: JSON.stringify({ item_id: itemId, rating: rating, description: description })
     })
     .then(response => {
         if (!response.ok) {
@@ -106,15 +113,13 @@ function submitReview(event) {
     })
     .then(result => {
         alert('Review submitted successfully!');
-        closeReviewModal(); // Close the modal on success
+        form.reset(); // Optionally reset the form after submission
     })
     .catch(error => {
         console.error('Error submitting review:', error);
         alert('Failed to submit review.');
     });
 }
-
-
 
 function clearSearch() {
     document.getElementById('searchCategory').value = ''; // Clear input field
@@ -123,7 +128,6 @@ function clearSearch() {
 }
 
 function logoutFunction() {
-    // Implementation depends on how you handle logout, possibly redirecting to a logout route
     window.location.href = '/logout';
 }
 
