@@ -63,14 +63,15 @@ function performSearch() {
         itemSelect.innerHTML = ''; // Clear previous options
 
         items.forEach(item => {
+            const price = parseFloat(item.price); // Ensure price is a number
             const row = `
                 <tr>
                     <td>${item.title}</td>
                     <td>${item.category}</td>
-                    <td>$${item.price.toFixed(2)}</td>
+                    <td>$${price.toFixed(2)}</td>
                 </tr>
             `;
-            const option = `<option value="${item.id}">${item.title} - $${item.price.toFixed(2)}</option>`;
+            const option = `<option value="${item.id}">${item.title} - $${price.toFixed(2)}</option>`;
             resultsBody.innerHTML += row;
             itemSelect.innerHTML += option;
         });
@@ -85,6 +86,7 @@ function performSearch() {
 }
 
 function submitReview() {
+    event.preventDefault(); // Prevent form from submitting normally
     const itemId = document.getElementById('itemSelect').value;
     const rating = document.getElementById('rating').value;
     const reviewText = document.getElementById('reviewDescription').value;
