@@ -1,13 +1,4 @@
-/* // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    var modal = document.getElementById('signupModal');
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
- */
- 
- // When the user clicks anywhere outside of the modal, close it
+
  window.onclick = function(event) {
     var signupModal = document.getElementById('signupModal');
     var reviewModal = document.getElementById('reviewModal');
@@ -85,12 +76,13 @@ function performSearch() {
     });
 }
 
-function submitReview() {
-    event.preventDefault(); // Prevent form from submitting normally
+function submitReview(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
     const itemId = document.getElementById('itemSelect').value;
     const rating = document.getElementById('rating').value;
     const reviewText = document.getElementById('reviewDescription').value;
 
+    // AJAX call to submit the review
     fetch('/add_review', {
         method: 'POST',
         headers: {
@@ -105,14 +97,19 @@ function submitReview() {
         return response.json();
     })
     .then(result => {
-        alert('Review submitted successfully!');
-        document.getElementById('reviewForm').reset();
+        if (result.error) {
+            alert(result.error);
+        } else {
+            alert('Review submitted successfully!');
+            document.getElementById('reviewForm').reset();
+        }
     })
     .catch(error => {
         console.error('Error submitting review:', error);
         alert('Failed to submit review.');
     });
 }
+
 
 function clearSearch() {
     document.getElementById('searchCategory').value = ''; // Clear input field
