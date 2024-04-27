@@ -11,7 +11,7 @@
         <h1>Welcome to the Marketplace App</h1>
         <button id="logout" onclick="logoutFunction()">Logout</button>
     </header>
-    
+
     <!-- Search Form and Results -->
     <section id="searchSection">
         <h2>Search Items by Category</h2>
@@ -29,7 +29,6 @@
                         <th>Title</th>
                         <th>Category</th>
                         <th>Price</th>
-                        <th>Review</th>
                     </tr>
                 </thead>
                 <tbody id="searchResultsBody">
@@ -37,12 +36,22 @@
                 </tbody>
             </table>
         </div>
-        <div id="reviewSection" style="display: none;">
-            <h3>Write a Review:</h3>
-            <form id="reviewForm" onsubmit="submitReview(event);">
-                <input type="hidden" id="reviewItemId" name="item_id">
-                <label for="reviewText">Your Review:</label>
-                <input type="text" id="reviewText" name="reviewText" required>
+        <div id="reviewSection" style="display:none;">
+            <h3>Submit a Review</h3>
+            <form id="reviewForm" onsubmit="event.preventDefault(); submitReview();">
+                <label for="itemSelect">Select Item:</label>
+                <select id="itemSelect" required>
+                    <!-- Options will be added dynamically -->
+                </select><br>
+                <label for="rating">Rating:</label>
+                <select id="rating" required>
+                    <option value="excellent">Excellent</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="poor">Poor</option>
+                </select><br>
+                <label for="reviewDescription">Description:</label>
+                <textarea id="reviewDescription" required></textarea><br>
                 <button type="submit">Submit Review</button>
             </form>
         </div>
@@ -51,9 +60,8 @@
     <footer>
         <!-- Include any common footer content here -->
     </footer>
-    
+
     <!-- Link to script.js -->
     <script src="static/script.js"></script>
-    
 </body>
 </html>

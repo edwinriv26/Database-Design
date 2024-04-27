@@ -50,23 +50,33 @@ function performSearch() {
         },
         body: JSON.stringify({ category: category })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(items => {
         const resultsBody = document.getElementById('searchResultsBody');
-        resultsBody.innerHTML = ''; // Clear previous results
+        const itemSelect = document.getElementById('itemSelect');
+        resultsBody.innerHTML = '';
+        itemSelect.innerHTML = ''; // Clear previous options
+
         items.forEach(item => {
             const row = `
                 <tr>
                     <td>${item.title}</td>
                     <td>${item.category}</td>
                     <td>$${item.price.toFixed(2)}</td>
-                    <td><button onclick="openReviewSection(${item.id});">Review</button></td>
                 </tr>
             `;
+            const option = `<option value="${item.id}">${item.title} - $${item.price.toFixed(2)}</option>`;
             resultsBody.innerHTML += row;
+            itemSelect.innerHTML += option;
         });
+
         document.getElementById('searchResults').style.display = 'block'; // Show results
-        document.getElementById('reviewSection').style.display = 'none'; // Hide the review section initially
+        document.getElementById('reviewSection').style.display = 'block'; // Show the review section
     })
     .catch(error => {
         console.error('Error fetching search results:', error);
@@ -74,28 +84,27 @@ function performSearch() {
     });
 }
 
-function openReviewSection(itemId) {
-    document.getElementById('reviewItemId').value = itemId;
-    document.getElementById('reviewSection').style.display = 'block'; // Show the review section
-}
-
-function submitReview(event) {
-    event.preventDefault(); // Prevent form from submitting normally
-    const itemId = document.getElementById('reviewItemId').value;
-    const reviewText = document.getElementById('reviewText').value;
+function submitReview() {
+    const itemId = document.getElementById('itemSelect').value;
+    const rating = document.getElementById('rating').value;
+    const reviewText = document.getElementById('reviewDescription').value;
 
     fetch('/add_review', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ item_id: itemId, description: reviewText })
+        body: JSON.stringify({ item_id: itemId, rating: rating, description: reviewText })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok.');
+        }
+        return response.json();
+    })
     .then(result => {
         alert('Review submitted successfully!');
-        document.getElementById('reviewSection').style.display = 'none'; // Optionally hide the review section
-        document.getElementById('reviewForm').reset(); // Reset the form
+        document.getElementById('reviewForm').reset();
     })
     .catch(error => {
         console.error('Error submitting review:', error);
