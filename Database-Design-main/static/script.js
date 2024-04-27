@@ -36,7 +36,14 @@ function closeSignupModal() {
     signupModal.style.display = 'none';
 }
 
+function openReviewModal(itemId) {
+    document.getElementById('reviewItemId').value = itemId; // Set the item ID in a hidden input
+    document.getElementById('reviewModal').style.display = 'block';
+}
 
+function closeReviewModal() {
+    document.getElementById('reviewModal').style.display = 'none';
+}
 //-----------------------------------------search.html functions------------------------------------------
     
        
@@ -64,7 +71,8 @@ function performSearch() {
                 <tr>
                     <td>${item.title}</td>
                     <td>${item.category}</td>
-                    <td>${item.price}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td><a href="#" onclick="openReviewModal(${item.id});">Review</a></td>
                 </tr>
             `;
             resultsBody.innerHTML += row;
@@ -76,6 +84,36 @@ function performSearch() {
         alert('Failed to fetch search results.');
     });
 }
+function submitReview(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+    const itemId = document.getElementById('reviewItemId').value;
+    const rating = document.getElementById('rating').value; // Getting the rating from a select input
+    const reviewText = document.getElementById('reviewDescription').value;
+
+    // AJAX call to submit the review
+    fetch('/add_review', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ item_id: itemId, rating: rating, description: reviewText })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok.');
+        }
+        return response.json();
+    })
+    .then(result => {
+        alert('Review submitted successfully!');
+        closeReviewModal(); // Close the modal on success
+    })
+    .catch(error => {
+        console.error('Error submitting review:', error);
+        alert('Failed to submit review.');
+    });
+}
+
 
 
 function clearSearch() {

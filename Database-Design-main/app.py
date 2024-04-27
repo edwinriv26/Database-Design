@@ -212,33 +212,28 @@ def search():
         return jsonify(items_list)  # Return JSON response
 
 
+def count_user_reviews_today(username):
+    today = date.today()
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT COUNT(*) FROM reviews WHERE username = %s AND DATE(created_at) = %s", (username, today))
+    count = cur.fetchone()[0]
+    cur.close()
+    return count
+
 @app.route('/add_review', methods=['POST'])
 def add_review():
     if 'username' not in session:
-        flash('You must be logged in to add a review', 'error')
-        return redirect(url_for('home'))
+        return jsonify({'error': 'You must be logged in to add a review'}), 401
 
     username = session['username']
+    data = request.get_json()
+    item_id = data['item_id']
+    rating = data['rating']
+    description = data['description']
 
     # Check if the user has already given 3 reviews today
     if count_user_reviews_today(username) >= 3:
-        flash('You have already given the maximum number of reviews for today', 'error')
-        return redirect(url_for('home'))
-
-    # Parse request data
-    item_id = request.form['item_id']
-    rating = request.form['rating']
-    description = request.form['description']
-
-    # Check if the user is trying to review their own item
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT username FROM item WHERE id = %s", (item_id,))
-    item_username = cur.fetchone()[0]
-    cur.close()
-
-    if item_username == username:
-        flash('You cannot review your own item', 'error')
-        return redirect(url_for('home'))
+        return jsonify({'error': 'You have already given the maximum number of reviews for today'}), 403
 
     # Check if the user has already reviewed this item
     cur = mysql.connection.cursor()
@@ -247,8 +242,7 @@ def add_review():
     cur.close()
 
     if existing_review:
-        flash('You have already reviewed this item', 'error')
-        return redirect(url_for('home'))
+        return jsonify({'error': 'You have already reviewed this item'}), 403
 
     # Insert the review into the database
     cur = mysql.connection.cursor()
@@ -256,17 +250,10 @@ def add_review():
     mysql.connection.commit()
     cur.close()
 
-    flash('Review added successfully', 'success')
-    return redirect(url_for('home'))
+    return jsonify({'message': 'Review added successfully!'})
 
-# Helper function to count user's reviews for today
-def count_user_reviews_today(username):
-    today = date.today()
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT COUNT(*) FROM reviews WHERE username = %s AND DATE(created_at) = %s", (username, today))
-    count = cur.fetchone()[0]
-    cur.close()
-    return count
+if __name__ == '__main__':
+    app.run(debug=True)
 
 @app.route('/')
 def home():
