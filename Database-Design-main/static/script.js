@@ -50,7 +50,12 @@ function performSearch() {
         },
         body: JSON.stringify({ category: category })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(items => {
         const resultsBody = document.getElementById('searchResultsBody');
         resultsBody.innerHTML = ''; // Clear previous results
@@ -71,6 +76,7 @@ function performSearch() {
         alert('Failed to fetch search results.');
     });
 }
+
 
 function clearSearch() {
     document.getElementById('searchCategory').value = ''; // Clear input field

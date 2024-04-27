@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask import session
 from datetime import datetime, timedelta, date
-
+from flask import jsonify, request
 import re
 
 app = Flask(__name__, template_folder='templates')
@@ -191,20 +191,25 @@ def postitem():
     return render_template('postitem.html')
 
 
+from flask import jsonify, request
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-
     if request.method == 'GET':
         # Handle GET request for rendering the search page
         return render_template('search.html')
     elif request.method == 'POST':
-        category = request.form['category']
+        data = request.get_json()  # Get JSON data sent from the client
+        category = data['category']  # Access the category value from JSON
         cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM item WHERE category = %s", (category,))
+        query = "SELECT * FROM item WHERE category = %s"
+        cur.execute(query, (category,))
         items = cur.fetchall()
         cur.close()
 
-        return render_template('search.html', items=items)
+        # Convert query results into a list of dicts to serialize as JSON
+        items_list = [{'id': item[0], 'title': item[1], 'category': item[2], 'price': item[3]} for item in items]
+        return jsonify(items_list)  # Return JSON response
 
 
 @app.route('/add_review', methods=['POST'])
